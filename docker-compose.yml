@@ -3,7 +3,7 @@ services: # Serviço do backend
     build: . # Faz com que o Docker construa a imagem do backend a partir do Dockerfile que está no diretório atual (.)
     container_name: auth-api # Nome do container que vai ser criado para o backend
     ports: # Portas que o backend vai escutar
-      - '3000:3000'
+      - '3050:3000'
 
     environment: # Variáveis de ambiente
       - NODE_ENV=development # Ambiente de desenvolvimento
@@ -15,6 +15,9 @@ services: # Serviço do backend
 
     depends_on: # Faz com que o backend dependa do banco de dados para rodar corretamente
       - postgres
+
+    volumes: # Volumes que o backend vai usar
+      - .:/app # Volume para armazenar os arquivos do backend
 
   postgres: # Serviço do banco de dados
     image: postgres # Imagem do banco de dados
@@ -32,3 +35,4 @@ services: # Serviço do backend
 volumes: # Volumes que o banco de dados vai usar
   postgres-data: # Volume para armazenar os dados do banco de dados
     driver: local # Driver para armazenar os dados do banco de dados. "local" significa que o banco de dados vai ser armazenado na pasta "postgres-data"
+
