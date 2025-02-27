@@ -44,9 +44,7 @@ export class UserService {
       );
     }
 
-    console.log(password);
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
 
     const user = await this.prisma.user.create({
       data: {
@@ -100,11 +98,13 @@ export class UserService {
       throw new HttpException('ID is required', HttpStatus.BAD_REQUEST);
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await this.prisma.user.update({
       where: { id },
       data: {
         email,
-        password,
+        password: hashedPassword,
       },
     });
     return user;

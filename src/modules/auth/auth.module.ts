@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from 'src/services/auth.service';
 import { UserService } from 'src/services/user.service';
@@ -9,7 +9,7 @@ import { env } from 'process';
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Substitua por uma chave segura
       signOptions: { expiresIn: '1h' }, // Opcional: tempo de expiração do token
@@ -17,10 +17,8 @@ import { env } from 'process';
   ],
   controllers: [AuthController],
   providers: [UserService, AuthService, PrismaService],
-  exports: [],
+  exports: [JwtModule],
 })
 export class AuthModule {
-  constructor() {
-    console.log(env.JWT_SECRET);
-  }
+  constructor() {}
 }

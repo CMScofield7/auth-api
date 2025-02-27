@@ -6,16 +6,20 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDTO } from 'src/DTO/create-user.dto';
 import { User } from 'src/interfaces/user.interface';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { RoleGuard } from 'src/guards/role.guard';
 
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
+  @UseGuards(RoleGuard)
   async createUser(
     @Body() createUserDTO: CreateUserDTO,
   ): Promise<CreateUserDTO> {
@@ -31,17 +35,19 @@ export class UserController {
   }
 
   @Get('users')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   async findUsers(): Promise<User[]> {
     const users = await this.userService.findUsers();
     return users;
   }
 
   @Get('users/:param')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   async findUserByParam(@Param('param') param: string): Promise<User | object> {
     let user: User | null;
 
     if (!isNaN(Number(param))) {
-      user = await this.userService.findUserByID(Number(param));
+      user = await this.userService.findUserByID(+param);
     } else {
       user = await this.userService.findUserByEmail(param);
     }
@@ -56,16 +62,21 @@ export class UserController {
   }
 
   @Put('users/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   async updateUser(
     @Param('id') id: string,
     @Body() body: { email: string; password: string },
   ): Promise<object> {
     const { email, password } = body;
+
     const user = await this.userService.updateUser(+id, email, password);
+    console.log('user', user);
+
     return user;
   }
 
   @Delete('users/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   async deleteUser(@Param('id') id: string): Promise<object> {
     const user = await this.userService.deleteUser(+id);
 
@@ -81,6 +92,7 @@ export class UserController {
   }
 
   @Delete('users')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   async deleteAllUsers(): Promise<object> {
     const users = await this.userService.deleteAllUsers();
 
