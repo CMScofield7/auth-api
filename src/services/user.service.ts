@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { CreateUserDTO } from 'src/DTO/create-user.dto';
+import { User } from 'src/interfaces/user.interface';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -12,7 +15,7 @@ export class UserService {
     lastname: string,
     email: string,
     password: string,
-  ) {
+  ): Promise<CreateUserDTO> {
     if (await this.findUserByID(id)) {
       throw new HttpException(
         'User with this ID already exists',
@@ -41,20 +44,22 @@ export class UserService {
       );
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await this.prisma.user.create({
       data: {
         id,
         name,
         lastname,
         email,
-        password,
+        password: hashedPassword,
       },
     });
 
     return user;
   }
 
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string): Promise<User | null> {
     if (!email) {
       throw new HttpException('Email is required', HttpStatus.BAD_REQUEST);
     }
@@ -63,7 +68,7 @@ export class UserService {
     return user;
   }
 
-  async findUserByID(id: number) {
+  async findUserByID(id: number): Promise<User | null> {
     if (!id) {
       throw new HttpException('ID is required', HttpStatus.BAD_REQUEST);
     }
@@ -72,7 +77,7 @@ export class UserService {
     return user;
   }
 
-  async findUsers() {
+  async findUsers(): Promise<User[]> {
     if (!this.prisma) {
       throw new HttpException(
         'Prisma is not initialized',
@@ -84,7 +89,11 @@ export class UserService {
     return users;
   }
 
-  async updateUser(id: number, email: string, password: string) {
+  async updateUser(
+    id: number,
+    email: string,
+    password: string,
+  ): Promise<object> {
     if (!id) {
       throw new HttpException('ID is required', HttpStatus.BAD_REQUEST);
     }
@@ -99,7 +108,7 @@ export class UserService {
     return user;
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: number): Promise<object> {
     if (!id) {
       throw new HttpException('ID is required', HttpStatus.BAD_REQUEST);
     }
