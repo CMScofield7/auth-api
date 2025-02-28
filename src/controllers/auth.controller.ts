@@ -21,8 +21,11 @@ export class AuthController {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    const token = this.authService.generateToken(user);
+    const tokens = this.authService.generateTokens(user);
 
-    return { access_token: token };
+    return {
+      access_token: tokens.accessToken,
+      refresh_token: tokens.refreshToken,
+    };
   }
 }

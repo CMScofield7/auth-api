@@ -5,14 +5,11 @@ import { UserService } from 'src/services/user.service';
 import { UserModule } from '../user/user.module';
 import { AuthController } from 'src/controllers/auth.controller';
 import { PrismaService } from 'src/services/prisma.service';
-import { env } from 'process';
-
 @Module({
   imports: [
     forwardRef(() => UserModule),
     JwtModule.register({
-      secret: process.env.JWT_SECRET, // Substitua por uma chave segura
-      signOptions: { expiresIn: '1h' }, // Opcional: tempo de expiração do token
+      secret: process.env.JWT_SECRET,
     }),
   ],
   controllers: [AuthController],

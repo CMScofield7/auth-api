@@ -39,10 +39,10 @@ export class AuthService {
     return null;
   }
 
-  generateToken(payload: Payload) {
-    const token = this.jwtService.sign(payload);
-    console.log('generated token: ', token);
+  generateTokens(payload: Payload) {
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    return token;
+    return { accessToken, refreshToken };
   }
 }
