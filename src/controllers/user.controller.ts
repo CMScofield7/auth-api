@@ -45,7 +45,7 @@ export class UserController {
 
   @Get('users/me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Request() req: { user: Payload }) {
+  getProfile(@Request() req: { user: Payload }): Payload {
     return {
       id: req.user.id,
       name: req.user.name,

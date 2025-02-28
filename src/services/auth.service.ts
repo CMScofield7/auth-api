@@ -15,8 +15,19 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user: User | null = await this.userService.findUserByEmail(email);
+    console.log('🔎 Usuário encontrado:', user);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      console.log('❌ Usuário não encontrado');
+      return null;
+    }
+
+    console.log('🛠️ Comparando senhas...');
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log('🔍 Senha bate?: ', isMatch);
+
+    if (user && isMatch) {
+      console.log('✅ Senha correta! Logando...');
       return {
         id: user.id,
         email: user.email,
@@ -24,11 +35,14 @@ export class AuthService {
         lastname: user.lastname,
       };
     }
-
+    console.log('❌ Senha errada!');
     return null;
   }
 
   generateToken(payload: Payload) {
-    return this.jwtService.sign(payload);
+    const token = this.jwtService.sign(payload);
+    console.log('generated token: ', token);
+
+    return token;
   }
 }
