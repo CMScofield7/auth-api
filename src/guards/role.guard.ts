@@ -48,7 +48,7 @@ export class RoleGuard implements CanActivate {
       if (route.startsWith('/users/')) {
         const resourceParams = request.params.param; //Pega o ID ou o email da rota
         const resourceId = request.params.id; //Pega o ID da rota
-        console.log('resourceParams', resourceParams);
+        console.log('resourceParams: ', resourceParams);
 
         if (
           +resourceParams === user.id ||

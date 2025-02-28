@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
@@ -13,6 +14,7 @@ import { CreateUserDTO } from 'src/DTO/create-user.dto';
 import { User } from 'src/interfaces/user.interface';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { RoleGuard } from 'src/guards/role.guard';
+import { Payload } from 'src/interfaces/payload.interface';
 
 @Controller()
 export class UserController {
@@ -39,6 +41,17 @@ export class UserController {
   async findUsers(): Promise<User[]> {
     const users = await this.userService.findUsers();
     return users;
+  }
+
+  @Get('users/me')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@Request() req: { user: Payload }) {
+    return {
+      id: req.user.id,
+      name: req.user.name,
+      lastname: req.user.lastname,
+      email: req.user.email,
+    };
   }
 
   @Get('users/:param')
