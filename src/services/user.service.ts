@@ -106,8 +106,9 @@ export class UserService {
     return user;
   }
 
-  async deleteAllUsers() {
-    const users = await this.prisma.user.deleteMany();
-    return users;
+  async deleteAllUsers(): Promise<{
+    count: number;
+  }> {
+    return await this.prisma.user.deleteMany();
   }
 }

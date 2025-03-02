@@ -1,12 +1,13 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
+import { LoginDTO } from 'src/DTO/login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
+  async login(@Body() body: LoginDTO) {
     const { email, password } = body;
     return await this.authService.validateUser(email, password);
   }
@@ -21,12 +22,8 @@ export class AuthController {
   async logout(@Body() body: { refresh_token: string }) {
     const { refresh_token } = body;
     await this.authService.findRefreshToken(refresh_token);
-    return this.authService.deleteRefreshToken(refresh_token);
-  }
+    await this.authService.deleteRefreshToken(refresh_token);
 
-  @Get('find')
-  async find(@Body() body: { refresh_token: string }) {
-    const { refresh_token } = body;
-    return await this.authService.findRefreshToken(refresh_token);
+    return { message: 'Successfully logged out!' };
   }
 }

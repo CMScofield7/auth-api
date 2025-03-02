@@ -73,13 +73,7 @@ export class UserController {
   @Delete('users/:id')
   @UseGuards(JwtAuthGuard, RoleGuard)
   async deleteUser(@Param('id') id: string): Promise<object> {
-    const user = await this.userService.deleteUser(+id);
-
-    if (!user) {
-      return {
-        message: 'User not found',
-      };
-    }
+    await this.userService.deleteUser(+id);
 
     return {
       message: 'User deleted successfully',

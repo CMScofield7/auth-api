@@ -1,11 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from './prisma.service';
 import { RedisService } from './redis.service';
 
 @Injectable()
@@ -13,15 +16,16 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private prisma: PrismaService,
     private redisService: RedisService,
   ) {}
 
   async validateUser(email: string, password: string) {
     const user: User | null = await this.userService.findUserByEmail(email);
-    console.log(user ? '🔎 Usuário encontrado:' : '❌ Usuário não encontrado');
+    console.log(
+      user ? '🔎 Usuário encontrado!' : '❌ Usuário não encontrado...',
+    );
 
-    if (!user) throw new UnauthorizedException('User not found!');
+    if (!user) throw new NotFoundException('User not found!');
 
     console.log('🛠️ Comparando senhas...');
     const isMatch = await bcrypt.compare(password, user.password);
@@ -55,21 +59,10 @@ export class AuthService {
 
     await this.saveRefreshToken(userId, refreshToken);
 
-    return { accessToken, refreshToken };
+    return { access_token: accessToken, refresh_token: refreshToken };
   }
 
   async saveRefreshToken(userId: number, token: string): Promise<void> {
-    // const expiresAt = new Date();
-    // expiresAt.setDate(expiresAt.getDate() + 7);
-
-    // await this.prisma.refreshToken.create({
-    //   data: {
-    //     token,
-    //     userId,
-    //     expiresAt,
-    //   },
-    // });
-
     await this.redisService.set(
       `refreshToken:${token}`,
       JSON.stringify({
@@ -80,11 +73,8 @@ export class AuthService {
     );
   }
 
-  async findRefreshToken(token: string) {
+  async findRefreshToken(token: string): Promise<string> {
     const refreshToken = await this.redisService.get(`refreshToken:${token}`);
-    // const refreshToken = await this.prisma.refreshToken.findUnique({
-    //   where: { token },
-    // });
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found!');
@@ -98,13 +88,12 @@ export class AuthService {
 
     await this.deleteRefreshToken(token);
 
-    return this.generateTokens(+refreshToken);
+    const { userId } = JSON.parse(refreshToken) as { userId: number };
+
+    return this.generateTokens(userId);
   }
 
   async deleteRefreshToken(token: string) {
-    await this.redisService.delete(`refreshToken: ${token}`);
-    // return this.prisma.refreshToken.delete({
-    //   where: { token },
-    // });
+    await this.redisService.delete(`refreshToken:${token}`);
   }
 }
