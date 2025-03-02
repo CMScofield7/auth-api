@@ -15,7 +15,7 @@ export class RedisService implements OnModuleInit {
     console.log(`🚀 Redis connected on PORT ${process.env.REDIS_PORT}`);
   }
 
-  async get(key: string, value: string, ttl?: number): Promise<void> {
+  async set(key: string, value: string, ttl?: number): Promise<void> {
     if (ttl) {
       await this.redis.set(key, value, 'EX', ttl);
     } else {
@@ -23,7 +23,7 @@ export class RedisService implements OnModuleInit {
     }
   }
 
-  async getCache(key: string): Promise<string | null> {
+  async get(key: string): Promise<string | null> {
     return await this.redis.get(key);
   }
 

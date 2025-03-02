@@ -5,6 +5,7 @@ import { UserService } from 'src/services/user.service';
 import { UserModule } from '../user/user.module';
 import { AuthController } from 'src/controllers/auth.controller';
 import { PrismaService } from 'src/services/prisma.service';
+import { RedisService } from 'src/services/redis.service';
 @Module({
   imports: [
     forwardRef(() => UserModule),
@@ -13,7 +14,7 @@ import { PrismaService } from 'src/services/prisma.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [UserService, AuthService, PrismaService],
+  providers: [UserService, AuthService, PrismaService, RedisService],
   exports: [JwtModule],
 })
 export class AuthModule {

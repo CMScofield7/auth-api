@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from './prisma.service';
+import { RedisService } from './redis.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private prisma: PrismaService,
+    private redisService: RedisService,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -56,23 +58,33 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async saveRefreshToken(userId: number, token: string) {
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+  async saveRefreshToken(userId: number, token: string): Promise<void> {
+    // const expiresAt = new Date();
+    // expiresAt.setDate(expiresAt.getDate() + 7);
 
-    await this.prisma.refreshToken.create({
-      data: {
-        token,
+    // await this.prisma.refreshToken.create({
+    //   data: {
+    //     token,
+    //     userId,
+    //     expiresAt,
+    //   },
+    // });
+
+    await this.redisService.set(
+      `refreshToken:${token}`,
+      JSON.stringify({
         userId,
-        expiresAt,
-      },
-    });
+        token,
+      }),
+      60 * 60 * 24 * 7,
+    );
   }
 
   async findRefreshToken(token: string) {
-    const refreshToken = await this.prisma.refreshToken.findUnique({
-      where: { token },
-    });
+    const refreshToken = await this.redisService.get(`refreshToken:${token}`);
+    // const refreshToken = await this.prisma.refreshToken.findUnique({
+    //   where: { token },
+    // });
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found!');
@@ -84,14 +96,15 @@ export class AuthService {
   async updateRefreshToken(token: string): Promise<object | null> {
     const refreshToken = await this.findRefreshToken(token);
 
-    await this.deleteRefreshToken(refreshToken.token);
+    await this.deleteRefreshToken(token);
 
-    return this.generateTokens(refreshToken.userId);
+    return this.generateTokens(+refreshToken);
   }
 
   async deleteRefreshToken(token: string) {
-    return this.prisma.refreshToken.delete({
-      where: { token },
-    });
+    await this.redisService.delete(`refreshToken: ${token}`);
+    // return this.prisma.refreshToken.delete({
+    //   where: { token },
+    // });
   }
 }

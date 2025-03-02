@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 
 @Controller('auth')
@@ -22,5 +22,11 @@ export class AuthController {
     const { refresh_token } = body;
     await this.authService.findRefreshToken(refresh_token);
     return this.authService.deleteRefreshToken(refresh_token);
+  }
+
+  @Get('find')
+  async find(@Body() body: { refresh_token: string }) {
+    const { refresh_token } = body;
+    return await this.authService.findRefreshToken(refresh_token);
   }
 }
