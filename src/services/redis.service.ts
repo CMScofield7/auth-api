@@ -12,7 +12,6 @@ export class RedisService implements OnModuleInit {
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
     });
-    console.log(`🚀 Redis connected on PORT ${process.env.REDIS_PORT}`);
   }
 
   async set(key: string, value: string, ttl?: number): Promise<void> {

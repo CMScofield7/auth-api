@@ -8,16 +8,12 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async createUser(
-    id: number,
     name: string,
     lastname: string,
     email: string,
     password: string,
+    role: string,
   ): Promise<string> {
-    if (await this.findUserByID(id)) {
-      throw new BadRequestException('ID is required');
-    }
-
     if (await this.findUserByEmail(email)) {
       throw new BadRequestException('User already exists');
     }
@@ -37,11 +33,11 @@ export class UserService {
 
     await this.prisma.user.create({
       data: {
-        id,
         name,
         lastname,
         email,
         password: hashedPassword,
+        role,
       },
     });
 

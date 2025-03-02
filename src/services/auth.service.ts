@@ -54,6 +54,7 @@ export class AuthService {
         name: user.name,
         lastname: user.lastname,
         email: user.email,
+        role: user.role,
       },
       { expiresIn: '10m' },
     );

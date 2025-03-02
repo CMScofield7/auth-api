@@ -3,6 +3,7 @@ export interface Payload {
   name: string;
   lastname: string;
   email: string;
+  role: string;
   iat?: number;
   exp?: number;
 }

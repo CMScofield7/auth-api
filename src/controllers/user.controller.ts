@@ -22,13 +22,14 @@ export class UserController {
 
   @Post('register')
   @UseGuards(RoleGuard)
-  async createUser(@Body() createUserDTO: CreateUserDTO): Promise<string> {
+  async createUser(@Body() body: CreateUserDTO): Promise<string> {
+    const { name, lastname, email, password, role } = body;
     return await this.userService.createUser(
-      createUserDTO.id,
-      createUserDTO.name,
-      createUserDTO.lastname,
-      createUserDTO.email,
-      createUserDTO.password,
+      name,
+      lastname,
+      email,
+      password,
+      role,
     );
   }
 
@@ -46,17 +47,18 @@ export class UserController {
       name: req.user.name,
       lastname: req.user.lastname,
       email: req.user.email,
+      role: req.user.role,
     };
   }
 
-  @Get('users/:param')
+  @Get('users/:id')
   @UseGuards(JwtAuthGuard, RoleGuard)
-  async findUserByParam(@Param('param') param: string): Promise<User | null> {
-    if (!isNaN(Number(param))) {
-      return await this.userService.findUserByID(+param);
-    } else {
-      return await this.userService.findUserByEmail(param);
-    }
+  async findUserByID(
+    @Param('id') id: string,
+  ): Promise<User | { message: string } | null> {
+    if (!isNaN(Number(id))) return await this.userService.findUserByID(+id);
+
+    return { message: 'Invalid credentials' };
   }
 
   @Put('users/:id')
