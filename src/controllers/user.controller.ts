@@ -35,8 +35,7 @@ export class UserController {
   @Get('users')
   @UseGuards(JwtAuthGuard, RoleGuard)
   async findUsers(): Promise<User[]> {
-    const users = await this.userService.findUsers();
-    return users;
+    return await this.userService.findUsers();
   }
 
   @Get('users/me')
@@ -52,22 +51,12 @@ export class UserController {
 
   @Get('users/:param')
   @UseGuards(JwtAuthGuard, RoleGuard)
-  async findUserByParam(@Param('param') param: string): Promise<User | object> {
-    let user: User | null;
-
+  async findUserByParam(@Param('param') param: string): Promise<User | null> {
     if (!isNaN(Number(param))) {
-      user = await this.userService.findUserByID(+param);
+      return await this.userService.findUserByID(+param);
     } else {
-      user = await this.userService.findUserByEmail(param);
+      return await this.userService.findUserByEmail(param);
     }
-
-    if (!user) {
-      return {
-        message: 'User not found',
-      };
-    }
-
-    return user;
   }
 
   @Put('users/:id')
@@ -78,10 +67,7 @@ export class UserController {
   ): Promise<object> {
     const { email, password } = body;
 
-    const user = await this.userService.updateUser(+id, email, password);
-    console.log('user', user);
-
-    return user;
+    return await this.userService.updateUser(+id, email, password);
   }
 
   @Delete('users/:id')

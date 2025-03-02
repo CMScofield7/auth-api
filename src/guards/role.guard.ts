@@ -1,3 +1,5 @@
+// Comentários pra eu lembrar da receita de bolo!
+
 import {
   CanActivate,
   ExecutionContext,

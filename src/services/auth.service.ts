@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/interfaces/user.interface';
-import { Payload } from 'src/interfaces/payload.interface';
 import { v4 as uuidv4 } from 'uuid';
 
 import * as bcrypt from 'bcryptjs';
@@ -18,12 +17,9 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user: User | null = await this.userService.findUserByEmail(email);
-    console.log('🔎 Usuário encontrado:', user);
+    console.log(user ? '🔎 Usuário encontrado:' : '❌ Usuário não encontrado');
 
-    if (!user) {
-      console.log('❌ Usuário não encontrado');
-      throw new UnauthorizedException('User not found!');
-    }
+    if (!user) throw new UnauthorizedException('User not found!');
 
     console.log('🛠️ Comparando senhas...');
     const isMatch = await bcrypt.compare(password, user.password);
@@ -34,13 +30,14 @@ export class AuthService {
       return this.generateTokens(user.id);
     }
     console.log('❌ Senha errada!');
+
     return null;
   }
 
   async generateTokens(userId: number) {
     const user: User | null = await this.userService.findUserByID(userId);
     if (!user) {
-      throw new UnauthorizedException('User not found!');
+      throw new UnauthorizedException('Invalid credentials!');
     }
 
     const accessToken = this.jwtService.sign(
@@ -72,19 +69,22 @@ export class AuthService {
     });
   }
 
-  async findAndUpdateRefreshToken(token: string): Promise<object | null> {
-    const refreshToken = await this.prisma.refreshToken.findFirst({
-      where: { token, expiresAt: { gte: new Date() } },
+  async findRefreshToken(token: string) {
+    const refreshToken = await this.prisma.refreshToken.findUnique({
+      where: { token },
     });
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found!');
     }
 
-    const deleteRefreshToken = await this.deleteRefreshToken(
-      refreshToken.token,
-    );
-    console.log('deleteRefreshToken:', deleteRefreshToken);
+    return refreshToken;
+  }
+
+  async updateRefreshToken(token: string): Promise<object | null> {
+    const refreshToken = await this.findRefreshToken(token);
+
+    await this.deleteRefreshToken(refreshToken.token);
 
     return this.generateTokens(refreshToken.userId);
   }
