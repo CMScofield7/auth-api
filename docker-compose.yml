@@ -33,7 +33,20 @@ services: # Serviço do backend
     volumes: # Volumes que o banco de dados vai usar
       - postgres-data:/var/lib/postgresql/data # Volume para armazenar os dados do banco de dados
 
+  redis: # Serviço do Redis
+    image: redis # Imagem do Redis
+    container_name: redis # Nome do container que vai ser criado para o Redis
+    ports: # Portas que o Redis vai escutar
+      - '6379:6379'
+
+    volumes: # Volumes que o Redis vai usar
+      - redis-data:/data # Volume para armazenar os dados do Redis
+    command: ['redis-server', '--appendonly', 'yes']
+
 volumes: # Volumes que o banco de dados vai usar
   postgres-data: # Volume para armazenar os dados do banco de dados
     driver: local # Driver para armazenar os dados do banco de dados. "local" significa que o banco de dados vai ser armazenado na pasta "postgres-data"
+
+  redis-data: # Volume para armazenar os dados do Redis
+    driver: local # Driver para armazenar os dados do Redis. "local" significa que o Redis vai ser armazenado na pasta "redis-data"
 
