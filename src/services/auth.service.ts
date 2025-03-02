@@ -27,6 +27,8 @@ export class AuthService {
 
     if (!user) throw new NotFoundException('User not found!');
 
+    if (!user.password) throw new UnauthorizedException('Invalid credentials!');
+
     console.log('🛠️ Comparando senhas...');
     const isMatch = await bcrypt.compare(password, user.password);
     console.log('🔍 Senha bate?: ', isMatch);

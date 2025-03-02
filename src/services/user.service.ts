@@ -53,7 +53,9 @@ export class UserService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
     return user;
   }
 
@@ -62,7 +64,10 @@ export class UserService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      omit: { password: true },
+    });
     return user;
   }
 
@@ -71,7 +76,7 @@ export class UserService {
       throw new BadRequestException('Prisma is not initialized');
     }
 
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({ omit: { password: true } });
     return users;
   }
 
