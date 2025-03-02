@@ -22,18 +22,14 @@ export class UserController {
 
   @Post('register')
   @UseGuards(RoleGuard)
-  async createUser(
-    @Body() createUserDTO: CreateUserDTO,
-  ): Promise<CreateUserDTO> {
-    const user = await this.userService.createUser(
+  async createUser(@Body() createUserDTO: CreateUserDTO): Promise<string> {
+    return await this.userService.createUser(
       createUserDTO.id,
       createUserDTO.name,
       createUserDTO.lastname,
       createUserDTO.email,
       createUserDTO.password,
     );
-
-    return user;
   }
 
   @Get('users')

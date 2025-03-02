@@ -1,31 +1,30 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private jwtService: JwtService,
+  ) {}
 
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
     const { email, password } = body;
 
-    const user = await this.authService.validateUser(email, password);
+    return await this.authService.validateUser(email, password);
+  }
 
-    if (!user) {
-      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
-    }
+  @Post('refresh')
+  async refresh(@Body() body: { refresh_token: string }) {
+    return await this.authService.findAndUpdateRefreshToken(body.refresh_token);
+  }
 
-    const tokens = this.authService.generateTokens(user);
+  @Post('logout')
+  async logout(@Body() body: { refresh_token: string }) {
+    const { refresh_token } = body;
 
-    return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
-    };
+    return this.authService.deleteRefreshToken(refresh_token);
   }
 }
