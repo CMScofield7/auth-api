@@ -15,6 +15,9 @@ import { User } from 'src/interfaces/user.interface';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { Payload } from 'src/interfaces/payload.interface';
+import { ChangeEmailDTO } from 'src/DTO/change-email.dto';
+import { ChangePasswordDTO } from 'src/DTO/change-password.dto';
+import { ForgotPasswordDTO } from 'src/DTO/forgot-password.dto';
 
 @Controller()
 export class UserController {
@@ -31,6 +34,12 @@ export class UserController {
       password,
       role,
     );
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: ForgotPasswordDTO) {
+    const { email } = body;
+    return await this.userService.forgotPassword(email);
   }
 
   @Get('users')
@@ -61,15 +70,26 @@ export class UserController {
     return { message: 'Invalid credentials' };
   }
 
-  @Put('users/:id')
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  async updateUser(
-    @Param('id') id: string,
-    @Body() body: { email: string; password: string },
-  ): Promise<object> {
-    const { email, password } = body;
+  @Put('users/me/change-email')
+  @UseGuards(JwtAuthGuard)
+  async changeEmail(@Body() body: ChangeEmailDTO): Promise<object> {
+    const { email } = body;
 
-    return await this.userService.updateUser(+id, email, password);
+    return await this.userService.changeEmail(email);
+  }
+
+  @Put('users/me/change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(
+    @Body() body: ChangePasswordDTO,
+    @Request() req: { user: Payload },
+  ): Promise<object> {
+    const { oldPassword, newPassword } = body;
+    return await this.userService.changePassword(
+      +req.user.id,
+      oldPassword,
+      newPassword,
+    );
   }
 
   @Delete('users/:id')

@@ -1,11 +1,22 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { User } from 'src/interfaces/user.interface';
 import * as bcrypt from 'bcryptjs';
+import { nanoid } from 'nanoid';
+import { RedisService } from './redis.service';
+import { MailService } from './mail.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private redisService: RedisService,
+    private mailService: MailService,
+  ) {}
 
   async createUser(
     name: string,
@@ -62,7 +73,6 @@ export class UserService {
 
     const user = await this.prisma.user.findUnique({
       where: { id },
-      omit: { password: true },
     });
     return user;
   }
@@ -76,26 +86,66 @@ export class UserService {
     return users;
   }
 
-  async updateUser(
-    id: number,
-    email: string,
-    password: string,
-  ): Promise<object> {
-    if (!id) {
+  async changeEmail(email: string): Promise<object> {
+    if (!email) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await this.prisma.user.update({
-      where: { id },
+      where: { email },
       data: {
         email,
-        password: hashedPassword,
       },
     });
 
     return user;
+  }
+
+  async changePassword(
+    id: number,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<object> {
+    const user = await this.findUserByID(id);
+
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.password) throw new BadRequestException('Invalid data!');
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: hashedPassword,
+      },
+    });
+  }
+
+  async forgotPassword(email: string): Promise<object> {
+    const user = await this.findUserByEmail(email);
+
+    if (user) {
+      const resetToken = nanoid(64);
+      await this.redisService.set(
+        `resetToken:${resetToken}`,
+        JSON.stringify({
+          userId: user.id,
+          token: resetToken,
+        }),
+        60 * 60 * 8,
+      );
+
+      //Manda o email com o link
+      await this.mailService.sendPasswordResetEmail(email, resetToken);
+    }
+
+    return { message: 'Email sent successfully' };
   }
 
   async deleteUser(id: number): Promise<object> {
