@@ -5,6 +5,10 @@ import { UserService } from 'src/services/user.service';
 import { UserModule } from '../user/user.module';
 import { AuthController } from 'src/controllers/auth.controller';
 import { PrismaService } from 'src/services/prisma.service';
+<<<<<<< HEAD
+=======
+import { RedisService } from 'src/services/redis.service';
+>>>>>>> 0.13
 @Module({
   imports: [
     forwardRef(() => UserModule),
@@ -13,7 +17,11 @@ import { PrismaService } from 'src/services/prisma.service';
     }),
   ],
   controllers: [AuthController],
+<<<<<<< HEAD
   providers: [UserService, AuthService, PrismaService],
+=======
+  providers: [UserService, AuthService, PrismaService, RedisService],
+>>>>>>> 0.13
   exports: [JwtModule],
 })
 export class AuthModule {

@@ -16,6 +16,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+<<<<<<< HEAD
     "noFallthroughCasesInSwitch": false
+=======
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "src/*": ["./src/*"]
+    }
+>>>>>>> 0.13
   }
 }

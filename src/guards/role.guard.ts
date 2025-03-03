@@ -22,13 +22,24 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
+<<<<<<< HEAD
     //Bloqueando POST /register pra usuários com id>= 2
     if (route === '/register' && method === 'POST' && user && user.id >= 2) {
+=======
+    //Bloqueando POST /register pra usuários com role 'user'
+    if (
+      route === '/register' &&
+      method === 'POST' &&
+      user &&
+      user.role === 'user'
+    ) {
+>>>>>>> 0.13
       throw new ForbiddenException(
         'Access Denied! You are not allowed to register users!',
       );
     }
 
+<<<<<<< HEAD
     //Permitindo todas as rotas aos IDS 0 e 1
     if (user && user.id === 1) {
       return true;
@@ -36,6 +47,15 @@ export class RoleGuard implements CanActivate {
 
     //Bloqueando rotas pra id >=2
     if (user && user.id >= 2) {
+=======
+    //Permitindo todas as rotas aos admins
+    if (user && user.role === 'admin') {
+      return true;
+    }
+
+    //Bloqueando rotas pra 'user'
+    if (user && user.role === 'user') {
+>>>>>>> 0.13
       //Bloqueia as rotas GET, PUT e DELETE em /users
       if (
         route === '/users' &&
@@ -48,6 +68,7 @@ export class RoleGuard implements CanActivate {
 
       //Permite apenas rotas /users/:id ou /user/:email se o ID ou email for do usuário autenticado
       if (route.startsWith('/users/')) {
+<<<<<<< HEAD
         const resourceParams = request.params.param; //Pega o ID ou o email da rota
         const resourceId = request.params.id; //Pega o ID da rota
         console.log('resourceParams: ', resourceParams);
@@ -57,6 +78,11 @@ export class RoleGuard implements CanActivate {
           resourceParams === user.email ||
           +resourceId === user.id
         ) {
+=======
+        const resourceId = request.params.id; //Pega o ID da rota
+
+        if (+resourceId === user.id) {
+>>>>>>> 0.13
           return true;
         } else {
           throw new ForbiddenException(

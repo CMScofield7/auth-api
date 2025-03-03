@@ -34,6 +34,11 @@
     "ioredis": "^5.5.0",
     "jsonwebtoken": "^9.0.2",
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    "nanoid": "^3.3.7",
+    "nodemailer": "^6.10.0",
+>>>>>>> 0.13
 =======
     "nanoid": "^3.3.7",
     "nodemailer": "^6.10.0",
@@ -56,6 +61,10 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    "@types/nodemailer": "^6.4.17",
+>>>>>>> 0.13
 =======
     "@types/nodemailer": "^6.4.17",
 >>>>>>> 0.13
@@ -92,12 +101,18 @@
     ],
     "coverageDirectory": "../coverage",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "testEnvironment": "node"
 =======
+=======
+>>>>>>> 0.13
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"
     }
+<<<<<<< HEAD
+>>>>>>> 0.13
+=======
 >>>>>>> 0.13
   }
 }
