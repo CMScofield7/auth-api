@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
-import { User } from 'src/interfaces/user.interface';
-import * as bcrypt from 'bcryptjs';
-
-@Injectable()
-export class UserService {
-  constructor(private prisma: PrismaService) {}
-
-  async createUser(
-    id: number,
-=======
 import {
   BadRequestException,
   Injectable,
@@ -32,21 +19,12 @@ export class UserService {
   ) {}
 
   async createUser(
->>>>>>> 0.13
     name: string,
     lastname: string,
     email: string,
     password: string,
-<<<<<<< HEAD
-  ): Promise<string> {
-    if (await this.findUserByID(id)) {
-      throw new BadRequestException('ID is required');
-    }
-
-=======
     role: string,
   ): Promise<string> {
->>>>>>> 0.13
     if (await this.findUserByEmail(email)) {
       throw new BadRequestException('User already exists');
     }
@@ -66,18 +44,11 @@ export class UserService {
 
     await this.prisma.user.create({
       data: {
-<<<<<<< HEAD
-        id,
-=======
->>>>>>> 0.13
         name,
         lastname,
         email,
         password: hashedPassword,
-<<<<<<< HEAD
-=======
         role,
->>>>>>> 0.13
       },
     });
 
@@ -89,13 +60,9 @@ export class UserService {
       throw new BadRequestException('Invalid credentials');
     }
 
-<<<<<<< HEAD
-    const user = await this.prisma.user.findUnique({ where: { email } });
-=======
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
->>>>>>> 0.13
     return user;
   }
 
@@ -104,13 +71,9 @@ export class UserService {
       throw new BadRequestException('Invalid credentials');
     }
 
-<<<<<<< HEAD
-    const user = await this.prisma.user.findUnique({ where: { id } });
-=======
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
->>>>>>> 0.13
     return user;
   }
 
@@ -119,28 +82,6 @@ export class UserService {
       throw new BadRequestException('Prisma is not initialized');
     }
 
-<<<<<<< HEAD
-    const users = await this.prisma.user.findMany();
-    return users;
-  }
-
-  async updateUser(
-    id: number,
-    email: string,
-    password: string,
-  ): Promise<object> {
-    if (!id) {
-      throw new BadRequestException('Invalid credentials');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await this.prisma.user.update({
-      where: { id },
-      data: {
-        email,
-        password: hashedPassword,
-=======
     const users = await this.prisma.user.findMany({ omit: { password: true } });
     return users;
   }
@@ -154,15 +95,12 @@ export class UserService {
       where: { email },
       data: {
         email,
->>>>>>> 0.13
       },
     });
 
     return user;
   }
 
-<<<<<<< HEAD
-=======
   async changePassword(
     id: number,
     oldPassword: string,
@@ -236,7 +174,6 @@ export class UserService {
     return { message: 'Password reset successfully' };
   }
 
->>>>>>> 0.13
   async deleteUser(id: number): Promise<object> {
     if (!id) {
       throw new BadRequestException('Invalid credentials');
@@ -246,15 +183,9 @@ export class UserService {
     return user;
   }
 
-<<<<<<< HEAD
-  async deleteAllUsers() {
-    const users = await this.prisma.user.deleteMany();
-    return users;
-=======
   async deleteAllUsers(): Promise<{
     count: number;
   }> {
     return await this.prisma.user.deleteMany();
->>>>>>> 0.13
   }
 }

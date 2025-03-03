@@ -15,13 +15,10 @@ import { User } from 'src/interfaces/user.interface';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { Payload } from 'src/interfaces/payload.interface';
-<<<<<<< HEAD
-=======
 import { ChangeEmailDTO } from 'src/DTO/change-email.dto';
 import { ChangePasswordDTO } from 'src/DTO/change-password.dto';
 import { ForgotPasswordDTO } from 'src/DTO/forgot-password.dto';
 import { ResetPasswordDTO } from 'src/DTO/reset-password.dto';
->>>>>>> 0.13
 
 @Controller()
 export class UserController {
@@ -29,18 +26,6 @@ export class UserController {
 
   @Post('register')
   @UseGuards(RoleGuard)
-<<<<<<< HEAD
-  async createUser(@Body() createUserDTO: CreateUserDTO): Promise<string> {
-    return await this.userService.createUser(
-      createUserDTO.id,
-      createUserDTO.name,
-      createUserDTO.lastname,
-      createUserDTO.email,
-      createUserDTO.password,
-    );
-  }
-
-=======
   async createUser(@Body() body: CreateUserDTO): Promise<string> {
     const { name, lastname, email, password, role } = body;
     return await this.userService.createUser(
@@ -58,7 +43,6 @@ export class UserController {
     return await this.userService.forgotPassword(email);
   }
 
->>>>>>> 0.13
   @Get('users')
   @UseGuards(JwtAuthGuard, RoleGuard)
   async findUsers(): Promise<User[]> {
@@ -73,30 +57,6 @@ export class UserController {
       name: req.user.name,
       lastname: req.user.lastname,
       email: req.user.email,
-<<<<<<< HEAD
-    };
-  }
-
-  @Get('users/:param')
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  async findUserByParam(@Param('param') param: string): Promise<User | null> {
-    if (!isNaN(Number(param))) {
-      return await this.userService.findUserByID(+param);
-    } else {
-      return await this.userService.findUserByEmail(param);
-    }
-  }
-
-  @Put('users/:id')
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  async updateUser(
-    @Param('id') id: string,
-    @Body() body: { email: string; password: string },
-  ): Promise<object> {
-    const { email, password } = body;
-
-    return await this.userService.updateUser(+id, email, password);
-=======
       role: req.user.role,
     };
   }
@@ -137,23 +97,12 @@ export class UserController {
   async resetPassword(@Body() body: ResetPasswordDTO) {
     const { resetToken, newPassword } = body;
     return await this.userService.resetPassword(resetToken, newPassword);
->>>>>>> 0.13
   }
 
   @Delete('users/:id')
   @UseGuards(JwtAuthGuard, RoleGuard)
   async deleteUser(@Param('id') id: string): Promise<object> {
-<<<<<<< HEAD
-    const user = await this.userService.deleteUser(+id);
-
-    if (!user) {
-      return {
-        message: 'User not found',
-      };
-    }
-=======
     await this.userService.deleteUser(+id);
->>>>>>> 0.13
 
     return {
       message: 'User deleted successfully',

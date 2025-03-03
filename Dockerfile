@@ -23,13 +23,7 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Comando para iniciar a aplicação (em modo de produção)
-<<<<<<< HEAD
-<<<<<<< HEAD
-CMD ["npm", "run", "dev"]
-=======
+
 CMD ["npm", "run", "start:prod"]
->>>>>>> 0.13
-=======
-CMD ["npm", "run", "start:prod"]
->>>>>>> 0.13
+
 

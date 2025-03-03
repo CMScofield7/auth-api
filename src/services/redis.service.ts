@@ -12,16 +12,9 @@ export class RedisService implements OnModuleInit {
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
     });
-<<<<<<< HEAD
-    console.log(`🚀 Redis connected on PORT ${process.env.REDIS_PORT}`);
-  }
-
-  async get(key: string, value: string, ttl?: number): Promise<void> {
-=======
   }
 
   async set(key: string, value: string, ttl?: number): Promise<void> {
->>>>>>> 0.13
     if (ttl) {
       await this.redis.set(key, value, 'EX', ttl);
     } else {
@@ -29,11 +22,7 @@ export class RedisService implements OnModuleInit {
     }
   }
 
-<<<<<<< HEAD
-  async getCache(key: string): Promise<string | null> {
-=======
   async get(key: string): Promise<string | null> {
->>>>>>> 0.13
     return await this.redis.get(key);
   }
 

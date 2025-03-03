@@ -15,18 +15,5 @@ model User {
   email        String         @unique
   password     String
   createdAt    DateTime       @default(now())
-<<<<<<< HEAD
-  refreshToken RefreshToken[]
-}
-
-model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-}
-=======
   role         String         @default("user")
 }
->>>>>>> 0.13
