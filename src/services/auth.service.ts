@@ -21,25 +21,18 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user: User | null = await this.userService.findUserByEmail(email);
-    console.log(
-      user ? '🔎 Usuário encontrado!' : '❌ Usuário não encontrado...',
-    );
 
     if (!user) throw new NotFoundException('User not found!');
 
     if (!user.password) throw new UnauthorizedException('Invalid credentials!');
 
-    console.log('🛠️ Comparando senhas...');
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log('🔍 Senha bate?: ', isMatch);
 
     if (isMatch) {
-      console.log('✅ Senha correta! Logando...');
       return this.generateTokens(user.id);
     }
-    console.log('❌ Senha errada!');
 
-    return null;
+    throw new UnauthorizedException('Invalid credentials!');
   }
 
   async generateTokens(userId: number) {
@@ -80,7 +73,7 @@ export class AuthService {
     const refreshToken = await this.redisService.get(`refreshToken:${token}`);
 
     if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token not found!');
+      throw new NotFoundException('Refresh token not found!');
     }
 
     return refreshToken;
