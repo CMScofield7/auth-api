@@ -6,12 +6,14 @@ import { UserModule } from '../user/user.module';
 import { AuthController } from 'src/controllers/auth.controller';
 import { PrismaService } from 'src/services/prisma.service';
 import { RedisService } from 'src/services/redis.service';
+import { RedisModule } from '../redis/redis.module';
 @Module({
   imports: [
     forwardRef(() => UserModule),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
+    RedisModule,
   ],
   controllers: [AuthController],
   providers: [UserService, AuthService, PrismaService, RedisService],
