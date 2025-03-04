@@ -6,19 +6,15 @@ export class MailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    this.transporter =
-      nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: 'barbara.gleichner@ethereal.email',
-          pass: 'vnDBmFDBCU2eRcGbKR',
-        },
-      }) ??
-      (() => {
-        throw new Error('Failed to create transporter');
-      });
+    this.transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'barbara.gleichner@ethereal.email',
+        pass: 'vnDBmFDBCU2eRcGbKR',
+      },
+    });
   }
 
   async sendPasswordResetEmail(to: string, token: string) {
