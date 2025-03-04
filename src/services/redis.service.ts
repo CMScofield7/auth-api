@@ -1,18 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
-export class RedisService implements OnModuleInit {
-  private redis: Redis;
-
-  constructor() {}
-
-  onModuleInit() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
-    });
-  }
+export class RedisService {
+  constructor(@Inject('REDIS') private readonly redis: Redis) {}
 
   async set(key: string, value: string, ttl?: number): Promise<void> {
     if (ttl) {

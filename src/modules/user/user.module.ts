@@ -5,9 +5,10 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { RedisService } from 'src/services/redis.service';
 import { MailService } from 'src/services/mail.service';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
-  imports: [PrismaModule, forwardRef(() => AuthModule)],
+  imports: [PrismaModule, forwardRef(() => AuthModule), RedisModule],
   controllers: [UserController],
   providers: [UserService, RedisService, MailService],
   exports: [UserService, MailService],
