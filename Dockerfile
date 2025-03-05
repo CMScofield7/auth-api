@@ -13,11 +13,11 @@ RUN npm install
 # Copiando o restante dos arquivos do projeto para o container
 COPY . .
 
-# Compilando o projeto
-RUN npm run build
-
 # Gerando o cliente Prisma
 RUN npx prisma generate
+
+# Compilando o projeto
+RUN npm run build
 
 # Definindo a variável de ambiente NODE_ENV para "production"
 ENV NODE_ENV=production
