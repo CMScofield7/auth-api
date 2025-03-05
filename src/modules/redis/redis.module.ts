@@ -10,7 +10,7 @@ import Redis from 'ioredis';
       provide: 'REDIS',
       useFactory: () => {
         return new Redis({
-          host: process.env.REDIS_HOST ?? 'localhost',
+          host: process.env.REDIS_HOST ?? 'redis',
           port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
         });
       },
@@ -18,4 +18,8 @@ import Redis from 'ioredis';
   ],
   exports: [RedisService, 'REDIS'],
 })
-export class RedisModule {}
+export class RedisModule {
+  constructor() {
+    console.log(process.env.REDIS_HOST);
+  }
+}
