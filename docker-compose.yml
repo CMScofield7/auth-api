@@ -12,7 +12,7 @@ services: # Serviço do backend
       - DB_USER=${DB_USER} # Usuário padrão do PostgreSQL
       - DB_PASSWORD=${DB_PASSWORD} # Senha padrão do PostgreSQL
       - DB_DATABASE=${DB_DATABASE} # Nome do banco de dados que vai ser criado
-      - REDIS_HOST='redis' # Nome do container do Redis
+      - REDIS_HOST=redis # Nome do container do Redis
       - REDIS_PORT=6379 # Porta padrão do Redis
 
     volumes: # Volumes que o backend vai usar
