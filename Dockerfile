@@ -22,10 +22,16 @@ RUN npm run build
 # Definindo a variável de ambiente NODE_ENV para "production"
 ENV NODE_ENV=production
 
+# Copiando o script de inicialização para o container
+COPY start.sh /app/start.sh
+
+# Tornando o script executável
+RUN chmod +x /app/start.sh
+
 # Expondo a porta 3000
 EXPOSE 3000
 
 # Comando para iniciar a aplicação (em modo de produção)
-CMD ["npm", "run", "prod"]
+CMD ["/app/start.sh"]
 
 
