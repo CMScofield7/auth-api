@@ -6,7 +6,6 @@ services: # Serviço do backend
       - '3050:3000'
 
     environment: # Variáveis de ambiente
-      - NODE_ENV=development # Ambiente de desenvolvimento
       - JWT_SECRET=${JWT_SECRET} # Chave secreta do JWT
       - DB_HOST=${DB_HOST} # Nome do container do banco de dados
       - DB_PORT=${DB_PORT} # Porta padrão do PostgreSQL
