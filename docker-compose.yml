@@ -12,6 +12,8 @@ services: # Serviço do backend
       - DB_USER=${DB_USER} # Usuário padrão do PostgreSQL
       - DB_PASSWORD=${DB_PASSWORD} # Senha padrão do PostgreSQL
       - DB_DATABASE=${DB_DATABASE} # Nome do banco de dados que vai ser criado
+      - REDIS_HOST=${REDIS_HOST} # Nome do container do Redis
+      - REDIS_PORT=${REDIS_PORT} # Porta padrão do Redis
 
     depends_on: # Faz com que o backend dependa do banco de dados para rodar corretamente
       - postgres
@@ -28,6 +30,10 @@ services: # Serviço do backend
       - POSTGRES_USER=${DB_USER} # Usuário padrão do PostgreSQL
       - POSTGRES_PASSWORD=${DB_PASSWORD} # Senha padrão do PostgreSQL
       - POSTGRES_DB=${DB_DATABASE} # Nome do banco de dados que vai ser criado
+
+    depends_on:
+      - postgres # Faz com que o backend dependa do banco de dados para rodar corretamente
+      - redis # Faz com que o backend dependa do Redis para rodar corretamente
 
     volumes: # Volumes que o banco de dados vai usar
       - postgres-data:/var/lib/postgresql/data # Volume para armazenar os dados do banco de dados
