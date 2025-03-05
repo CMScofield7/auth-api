@@ -32,6 +32,6 @@ RUN chmod +x /app/start.sh
 EXPOSE 3000
 
 # Comando para iniciar a aplicação (em modo de produção)
-CMD ["/app/start.sh"]
+CMD ["sh", "/app/start.sh"]
 
 
