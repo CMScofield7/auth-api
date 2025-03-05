@@ -11,7 +11,7 @@ import Redis from 'ioredis';
       useFactory: () => {
         return new Redis({
           host: process.env.REDIS_HOST,
-          port: parseInt(process.env.REDIS_PORT as string, 10),
+          port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
         });
       },
     },
