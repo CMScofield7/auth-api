@@ -22,6 +22,9 @@ services: # Serviço do backend
       - postgres # Faz com que o backend dependa do banco de dados para rodar corretamente
       - redis # Faz com que o backend dependa do Redis para rodar corretamente
 
+    networks:
+      - auth-network
+
   postgres: # Serviço do banco de dados
     image: postgres # Imagem do banco de dados
     container_name: postgres-db # Nome do container que vai ser criado para o banco de dados
@@ -35,6 +38,9 @@ services: # Serviço do backend
     volumes: # Volumes que o banco de dados vai usar
       - postgres-data:/var/lib/postgresql/data # Volume para armazenar os dados do banco de dados
 
+    networks:
+      - auth-network
+
   redis: # Serviço do Redis
     image: redis # Imagem do Redis
     container_name: redis # Nome do container que vai ser criado para o Redis
@@ -45,6 +51,9 @@ services: # Serviço do backend
       - redis-data:/data # Volume para armazenar os dados do Redis
     command: ['redis-server', '--appendonly', 'yes']
 
+    networks:
+      - auth-network
+
 volumes: # Volumes que o banco de dados vai usar
   postgres-data: # Volume para armazenar os dados do banco de dados
     driver: local # Driver para armazenar os dados do banco de dados. "local" significa que o banco de dados vai ser armazenado na pasta "postgres-data"
@@ -52,3 +61,6 @@ volumes: # Volumes que o banco de dados vai usar
   redis-data: # Volume para armazenar os dados do Redis
     driver: local # Driver para armazenar os dados do Redis. "local" significa que o Redis vai ser armazenado na pasta "redis-data"
 
+networks: # Redes que o backend vai usar
+  auth-network: # Rede para o backend
+    driver: bridge
