@@ -10,14 +10,14 @@ COPY package*.json ./
 # Instalando as dependências do projeto
 RUN npm install
 
-# Gerando o cliente Prisma
-RUN npx prisma generate
-
 # Copiando o restante dos arquivos do projeto para o container
 COPY . .
 
 # Compilando o projeto
 RUN npm run build
+
+# Gerando o cliente Prisma
+RUN npx prisma generate
 
 # Definindo a variável de ambiente NODE_ENV para "production"
 ENV NODE_ENV=production
@@ -27,4 +27,5 @@ EXPOSE 3000
 
 # Comando para iniciar a aplicação (em modo de produção)
 CMD ["npm", "run", "prod"]
+
 
